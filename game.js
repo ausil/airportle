@@ -423,14 +423,20 @@ function generateShareText() {
   return text.trim();
 }
 
-function share() {
-  const text = generateShareText();
-  if (navigator.share) {
-    navigator.share({ text }).catch(() => {});
-  } else if (navigator.clipboard) {
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!'));
   } else {
     showToast('Share not supported');
+  }
+}
+
+function share() {
+  const text = generateShareText();
+  if (navigator.canShare && navigator.canShare({ text })) {
+    navigator.share({ text }).catch(() => copyToClipboard(text));
+  } else {
+    copyToClipboard(text);
   }
 }
 
