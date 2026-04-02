@@ -27,6 +27,7 @@ body {
   align-items: center;
   min-height: 100dvh;
   overflow-x: hidden;
+  touch-action: manipulation;
 }
 
 header {
@@ -209,7 +210,7 @@ main {
 
 .kb-row button.wide-key {
   max-width: 68px;
-  font-size: 0.8rem;
+  font-size: 1.1rem;
   padding: 14px 4px;
 }
 

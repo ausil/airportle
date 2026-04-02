@@ -425,7 +425,9 @@ function generateShareText() {
 
 function share() {
   const text = generateShareText();
-  if (navigator.clipboard) {
+  if (navigator.share) {
+    navigator.share({ text }).catch(() => {});
+  } else if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!'));
   } else {
     showToast('Share not supported');
