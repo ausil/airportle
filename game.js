@@ -50,6 +50,7 @@ let currentRow = 0;
 let currentCol = 0;
 let currentGuess = '';
 let gameOver = false;
+let revealing = false;
 let guesses = [];
 
 // --- Build board ---
@@ -92,7 +93,7 @@ function getRow(row) {
 
 // --- Input ---
 function addLetter(letter) {
-  if (gameOver || currentCol >= WORD_LENGTH) return;
+  if (gameOver || revealing || currentCol >= WORD_LENGTH) return;
   const tile = getTile(currentRow, currentCol);
   tile.textContent = letter;
   tile.classList.add('filled');
@@ -101,7 +102,7 @@ function addLetter(letter) {
 }
 
 function removeLetter() {
-  if (gameOver || currentCol <= 0) return;
+  if (gameOver || revealing || currentCol <= 0) return;
   currentCol--;
   const tile = getTile(currentRow, currentCol);
   tile.textContent = '';
@@ -110,7 +111,7 @@ function removeLetter() {
 }
 
 function submitGuess() {
-  if (gameOver) return;
+  if (gameOver || revealing) return;
   if (currentGuess.length < WORD_LENGTH) {
     shakeRow(currentRow);
     showToast('Not enough letters');
@@ -164,6 +165,7 @@ function shakeRow(row) {
 }
 
 function revealRow(row, result) {
+  revealing = true;
   const tiles = [];
   for (let c = 0; c < WORD_LENGTH; c++) {
     tiles.push(getTile(row, c));
@@ -207,6 +209,7 @@ function revealRow(row, result) {
     currentRow++;
     currentCol = 0;
     currentGuess = '';
+    revealing = false;
   }, revealTime);
 }
 
