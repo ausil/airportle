@@ -5,7 +5,7 @@ const WORD_LENGTH = 3;
 
 // --- Daily puzzle selection ---
 function getDayIndex() {
-  const epoch = new Date(2024, 0, 1); // Jan 1 2024
+  const epoch = new Date(2026, 3, 2); // Apr 2 2026 — game #1
   const now = new Date();
   const msPerDay = 86400000;
   return Math.floor((now.setHours(0,0,0,0) - epoch.setHours(0,0,0,0)) / msPerDay);
@@ -410,7 +410,7 @@ setInterval(updateTimer, 1000);
 
 // --- Share ---
 function generateShareText() {
-  const dayNum = getDayIndex();
+  const dayNum = getDayIndex() + 1;
   const saved = loadGameState();
   const won = saved?.won;
   const numGuesses = won ? guesses.length : 'X';
