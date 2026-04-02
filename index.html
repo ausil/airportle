@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airportle</title>
+  <meta name="description" content="Guess the daily airport code in 6 tries!">
+  <meta property="og:title" content="Airportle">
+  <meta property="og:description" content="Guess the daily airport code in 6 tries!">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://airportle.au">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <button id="help-btn" class="icon-btn" aria-label="How to play">?</button>
+    <h1>Airportle</h1>
+    <button id="stats-btn" class="icon-btn" aria-label="Statistics">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="4" y="14" width="4" height="6"/><rect x="10" y="8" width="4" height="12"/><rect x="16" y="4" width="4" height="16"/>
+      </svg>
+    </button>
+  </header>
+
+  <main>
+    <div id="board">
+      <!-- 6 rows x 3 tiles, built by JS -->
+    </div>
+
+    <div id="keyboard">
+      <div class="kb-row">
+        <button data-key="Q">Q</button>
+        <button data-key="W">W</button>
+        <button data-key="E">E</button>
+        <button data-key="R">R</button>
+        <button data-key="T">T</button>
+        <button data-key="Y">Y</button>
+        <button data-key="U">U</button>
+        <button data-key="I">I</button>
+        <button data-key="O">O</button>
+        <button data-key="P">P</button>
+      </div>
+      <div class="kb-row">
+        <button data-key="A">A</button>
+        <button data-key="S">S</button>
+        <button data-key="D">D</button>
+        <button data-key="F">F</button>
+        <button data-key="G">G</button>
+        <button data-key="H">H</button>
+        <button data-key="J">J</button>
+        <button data-key="K">K</button>
+        <button data-key="L">L</button>
+      </div>
+      <div class="kb-row">
+        <button data-key="Enter" class="wide-key">ENTER</button>
+        <button data-key="Z">Z</button>
+        <button data-key="X">X</button>
+        <button data-key="C">C</button>
+        <button data-key="V">V</button>
+        <button data-key="B">B</button>
+        <button data-key="N">N</button>
+        <button data-key="M">M</button>
+        <button data-key="Backspace" class="wide-key">⌫</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast-container"></div>
+
+  <!-- Help Modal -->
+  <div id="help-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <h2>How to Play</h2>
+      <p>Guess the <strong>IATA airport code</strong> in 6 tries.</p>
+      <p>Each guess must be a 3-letter code. Press Enter to submit.</p>
+      <p>After each guess, the tiles will change color:</p>
+      <div class="example-row">
+        <div class="example-tile correct">L</div>
+        <div class="example-tile">A</div>
+        <div class="example-tile">X</div>
+      </div>
+      <p><strong class="green-text">Green</strong> — correct letter, correct position.</p>
+      <div class="example-row">
+        <div class="example-tile">J</div>
+        <div class="example-tile present">F</div>
+        <div class="example-tile">K</div>
+      </div>
+      <p><strong class="yellow-text">Yellow</strong> — correct letter, wrong position.</p>
+      <div class="example-row">
+        <div class="example-tile absent">S</div>
+        <div class="example-tile">F</div>
+        <div class="example-tile">O</div>
+      </div>
+      <p><strong class="gray-text">Gray</strong> — letter not in the code.</p>
+      <p>A new airport code is available each day!</p>
+    </div>
+  </div>
+
+  <!-- Stats Modal -->
+  <div id="stats-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <h2>Statistics</h2>
+      <div id="stats-grid">
+        <div class="stat"><span id="stat-played">0</span><label>Played</label></div>
+        <div class="stat"><span id="stat-win-pct">0</span><label>Win %</label></div>
+        <div class="stat"><span id="stat-streak">0</span><label>Current Streak</label></div>
+        <div class="stat"><span id="stat-max-streak">0</span><label>Max Streak</label></div>
+      </div>
+      <h3>Guess Distribution</h3>
+      <div id="guess-distribution"></div>
+      <div id="share-section" class="hidden">
+        <div id="next-puzzle-timer"></div>
+        <button id="share-btn">Share</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result info (shown after game ends) -->
+  <div id="result-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <h2 id="result-title"></h2>
+      <p id="result-airport"></p>
+      <button id="result-share-btn">Share</button>
+    </div>
+  </div>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>
