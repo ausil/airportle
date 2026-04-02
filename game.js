@@ -11,9 +11,34 @@ function getDayIndex() {
   return Math.floor((now.setHours(0,0,0,0) - epoch.setHours(0,0,0,0)) / msPerDay);
 }
 
+// Simple seeded PRNG (mulberry32)
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+// Shuffle using Fisher-Yates with a seeded RNG
+function seededShuffle(arr, seed) {
+  const copy = [...arr];
+  const rng = mulberry32(seed);
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 function getTodayAnswer() {
-  const idx = getDayIndex() % ANSWERS.length;
-  return ANSWERS[idx];
+  const dayIndex = getDayIndex();
+  // Each cycle of ANSWERS.length days uses a different shuffle
+  const cycle = Math.floor(dayIndex / ANSWERS.length);
+  const posInCycle = dayIndex % ANSWERS.length;
+  const shuffled = seededShuffle(ANSWERS, cycle);
+  return shuffled[posInCycle];
 }
 
 const todayAnswer = getTodayAnswer();
@@ -417,7 +442,8 @@ function showResultModal(won) {
   } else {
     title.textContent = `The answer was ${answer}`;
   }
-  airport.textContent = `${todayAnswer.name} — ${todayAnswer.city}`;
+  const location = [todayAnswer.city, todayAnswer.country].filter(Boolean).join(', ');
+  airport.textContent = location ? `${todayAnswer.name} — ${location}` : todayAnswer.name;
   openModal('result-modal');
 }
 
