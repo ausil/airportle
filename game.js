@@ -415,7 +415,7 @@ function generateShareText() {
   const won = saved?.won;
   const numGuesses = won ? guesses.length : 'X';
 
-  let text = `Airportle #${dayNum} ${numGuesses}/6\nhttps://airportle.au\n\n`;
+  let text = `Airportle #${dayNum} ${numGuesses}/6\nhttps://airportle.club\n\n`;
   for (const g of guesses) {
     const line = g.result.map(r => r === 'correct' ? '🟩' : r === 'present' ? '🟨' : '⬛').join('');
     text += line + '\n';
