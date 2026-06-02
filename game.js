@@ -18,19 +18,6 @@ const WORD_LENGTH = 3;
   localStorage.removeItem('airportle-day');
 })();
 
-// --- Mode ---
-function getMode() {
-  return localStorage.getItem('airportle-mode') || 'filtered';
-}
-
-function setMode(mode) {
-  localStorage.setItem('airportle-mode', mode);
-  location.reload();
-}
-
-const mode = getMode();
-const answerPool = mode === 'original' ? ANSWERS : STANDARD_ANSWERS;
-
 // --- Daily puzzle selection ---
 function getDayIndex() {
   const epoch = new Date(2026, 3, 2); // Apr 2 2026 — game #1
@@ -60,25 +47,19 @@ function seededShuffle(arr, seed) {
   return copy;
 }
 
-function getTodayAnswer() {
+function getTodayAnswer(pool) {
   const dayIndex = getDayIndex();
-  const cycle = Math.floor(dayIndex / answerPool.length);
-  const posInCycle = dayIndex % answerPool.length;
-  const shuffled = seededShuffle(answerPool, cycle);
+  const cycle = Math.floor(dayIndex / pool.length);
+  const posInCycle = dayIndex % pool.length;
+  const shuffled = seededShuffle(pool, cycle);
   return shuffled[posInCycle];
 }
 
-const todayAnswer = getTodayAnswer();
-const answer = todayAnswer.code.toUpperCase();
 const validSet = new Set(VALID_GUESSES.map(c => c.toUpperCase()));
 
-// --- State ---
-let currentRow = 0;
-let currentCol = 0;
-let currentGuess = '';
-let gameOver = false;
-let revealing = false;
-let guesses = [];
+// --- Mutable game state ---
+let mode, answerPool, todayAnswer, answer, statsKey, dayKey;
+let currentRow, currentCol, currentGuess, gameOver, revealing, guesses;
 
 // --- Build board ---
 const board = document.getElementById('board');
@@ -95,14 +76,6 @@ for (let r = 0; r < MAX_GUESSES; r++) {
   }
   board.appendChild(row);
 }
-
-// --- Mode toggle ---
-document.querySelectorAll('.mode-btn').forEach(btn => {
-  if (btn.dataset.mode === mode) btn.classList.add('active');
-  btn.addEventListener('click', () => {
-    if (btn.dataset.mode !== mode) setMode(btn.dataset.mode);
-  });
-});
 
 // --- Toast ---
 function showToast(msg, duration = 1500) {
@@ -125,6 +98,57 @@ function getTile(row, col) {
 function getRow(row) {
   return board.querySelector(`.row[data-row="${row}"]`);
 }
+
+// --- Reset board and keyboard UI ---
+function resetUI() {
+  for (let r = 0; r < MAX_GUESSES; r++) {
+    for (let c = 0; c < WORD_LENGTH; c++) {
+      const tile = getTile(r, c);
+      tile.textContent = '';
+      tile.className = 'tile';
+    }
+  }
+  document.querySelectorAll('[data-key]').forEach(btn => {
+    btn.classList.remove('correct', 'present', 'absent');
+  });
+}
+
+// --- Init game for a given mode ---
+function initGame(newMode) {
+  mode = newMode || localStorage.getItem('airportle-mode') || 'filtered';
+  localStorage.setItem('airportle-mode', mode);
+
+  answerPool = mode === 'original' ? ANSWERS : STANDARD_ANSWERS;
+  todayAnswer = getTodayAnswer(answerPool);
+  answer = todayAnswer.code.toUpperCase();
+  statsKey = `airportle-stats-${mode}`;
+  dayKey = `airportle-day-${mode}`;
+
+  currentRow = 0;
+  currentCol = 0;
+  currentGuess = '';
+  gameOver = false;
+  revealing = false;
+  guesses = [];
+
+  resetUI();
+
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+
+  const saved = loadGameState();
+  if (saved) {
+    restoreGame(saved);
+  }
+}
+
+// --- Mode toggle ---
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.mode !== mode) initGame(btn.dataset.mode);
+  });
+});
 
 // --- Input ---
 function addLetter(letter) {
@@ -209,14 +233,12 @@ function revealRow(row, result) {
   tiles.forEach((tile, i) => {
     setTimeout(() => {
       tile.classList.add('flip');
-      // Apply color at midpoint of flip
       setTimeout(() => {
         tile.classList.add(result[i]);
       }, 250);
     }, i * 300);
   });
 
-  // After all tiles revealed
   const revealTime = WORD_LENGTH * 300 + 500;
   setTimeout(() => {
     updateKeyboard(currentGuess, result);
@@ -224,7 +246,6 @@ function revealRow(row, result) {
     const won = result.every(r => r === 'correct');
     if (won) {
       gameOver = true;
-      // Bounce animation
       tiles.forEach((tile, i) => {
         setTimeout(() => tile.classList.add('bounce'), i * 100);
       });
@@ -320,9 +341,6 @@ document.getElementById('stats-btn').addEventListener('click', () => {
 });
 
 // --- Stats / persistence ---
-const statsKey = `airportle-stats-${mode}`;
-const dayKey = `airportle-day-${mode}`;
-
 function getStats() {
   try {
     return JSON.parse(localStorage.getItem(statsKey)) || defaultStats();
@@ -412,7 +430,6 @@ function updateStatsDisplay() {
     bar.style.width = pct + '%';
     bar.textContent = stats.distribution[i];
 
-    // Highlight the winning row if game just ended
     const saved = loadGameState();
     if (saved && saved.won && saved.guesses.length === i + 1) {
       bar.classList.add('highlight');
@@ -423,11 +440,12 @@ function updateStatsDisplay() {
     distContainer.appendChild(row);
   }
 
-  // Show share section if game is over
   const shareSection = document.getElementById('share-section');
   if (gameOver) {
     shareSection.classList.remove('hidden');
     updateTimer();
+  } else {
+    shareSection.classList.add('hidden');
   }
 }
 
@@ -496,14 +514,11 @@ function showResultModal(won) {
   openModal('result-modal');
 }
 
-// --- Init ---
-const saved = loadGameState();
-if (saved) {
-  restoreGame(saved);
-  // Don't auto-show modal on reload
-} else {
-  // Show help on first ever visit
-  if (!localStorage.getItem(statsKey)) {
-    setTimeout(() => openModal('help-modal'), 500);
-  }
+// --- Start ---
+initGame();
+
+// Show help on very first visit, regardless of mode
+if (!localStorage.getItem('airportle-visited')) {
+  localStorage.setItem('airportle-visited', '1');
+  setTimeout(() => openModal('help-modal'), 500);
 }
