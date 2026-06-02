@@ -371,6 +371,12 @@ main {
   border-color: var(--gray);
 }
 
+.help-divider {
+  border: none;
+  border-top: 1px solid var(--tile-border);
+  margin: 16px 0;
+}
+
 .green-text { color: var(--green); }
 .yellow-text { color: var(--yellow); }
 .gray-text { color: var(--light-gray); }
