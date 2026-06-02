@@ -75,6 +75,37 @@ header h1 {
   right: 16px;
 }
 
+/* Mode toggle */
+#mode-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--tile-border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 8px auto 0;
+}
+
+.mode-btn {
+  background: none;
+  border: none;
+  color: var(--light-gray);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+}
+
+.mode-btn + .mode-btn {
+  border-left: 1px solid var(--tile-border);
+}
+
+.mode-btn.active {
+  background: var(--tile-border);
+  color: var(--text);
+}
+
 main {
   display: flex;
   flex-direction: column;

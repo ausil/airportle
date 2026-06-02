@@ -1,7 +1,35 @@
-import { ANSWERS, VALID_GUESSES } from './airports.js';
+import { ANSWERS, STANDARD_ANSWERS, VALID_GUESSES } from './airports.js';
 
 const MAX_GUESSES = 6;
 const WORD_LENGTH = 3;
+
+// --- Migrate legacy stats (pre-modes) to original mode keys ---
+(function migrateLegacyStats() {
+  const legacyStats = localStorage.getItem('airportle-stats');
+  if (legacyStats && !localStorage.getItem('airportle-stats-original')) {
+    localStorage.setItem('airportle-stats-original', legacyStats);
+  }
+  localStorage.removeItem('airportle-stats');
+
+  const legacyDay = localStorage.getItem('airportle-day');
+  if (legacyDay && !localStorage.getItem('airportle-day-original')) {
+    localStorage.setItem('airportle-day-original', legacyDay);
+  }
+  localStorage.removeItem('airportle-day');
+})();
+
+// --- Mode ---
+function getMode() {
+  return localStorage.getItem('airportle-mode') || 'filtered';
+}
+
+function setMode(mode) {
+  localStorage.setItem('airportle-mode', mode);
+  location.reload();
+}
+
+const mode = getMode();
+const answerPool = mode === 'original' ? ANSWERS : STANDARD_ANSWERS;
 
 // --- Daily puzzle selection ---
 function getDayIndex() {
@@ -34,10 +62,9 @@ function seededShuffle(arr, seed) {
 
 function getTodayAnswer() {
   const dayIndex = getDayIndex();
-  // Each cycle of ANSWERS.length days uses a different shuffle
-  const cycle = Math.floor(dayIndex / ANSWERS.length);
-  const posInCycle = dayIndex % ANSWERS.length;
-  const shuffled = seededShuffle(ANSWERS, cycle);
+  const cycle = Math.floor(dayIndex / answerPool.length);
+  const posInCycle = dayIndex % answerPool.length;
+  const shuffled = seededShuffle(answerPool, cycle);
   return shuffled[posInCycle];
 }
 
@@ -68,6 +95,14 @@ for (let r = 0; r < MAX_GUESSES; r++) {
   }
   board.appendChild(row);
 }
+
+// --- Mode toggle ---
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  if (btn.dataset.mode === mode) btn.classList.add('active');
+  btn.addEventListener('click', () => {
+    if (btn.dataset.mode !== mode) setMode(btn.dataset.mode);
+  });
+});
 
 // --- Toast ---
 function showToast(msg, duration = 1500) {
@@ -285,9 +320,12 @@ document.getElementById('stats-btn').addEventListener('click', () => {
 });
 
 // --- Stats / persistence ---
+const statsKey = `airportle-stats-${mode}`;
+const dayKey = `airportle-day-${mode}`;
+
 function getStats() {
   try {
-    return JSON.parse(localStorage.getItem('airportle-stats')) || defaultStats();
+    return JSON.parse(localStorage.getItem(statsKey)) || defaultStats();
   } catch {
     return defaultStats();
   }
@@ -298,7 +336,7 @@ function defaultStats() {
 }
 
 function saveStats(stats) {
-  localStorage.setItem('airportle-stats', JSON.stringify(stats));
+  localStorage.setItem(statsKey, JSON.stringify(stats));
 }
 
 function saveGameState(won) {
@@ -314,8 +352,7 @@ function saveGameState(won) {
   }
   saveStats(stats);
 
-  // Save today's game
-  localStorage.setItem('airportle-day', JSON.stringify({
+  localStorage.setItem(dayKey, JSON.stringify({
     dayIndex: getDayIndex(),
     guesses: guesses.map(g => ({ guess: g.guess, result: g.result })),
     won,
@@ -325,7 +362,7 @@ function saveGameState(won) {
 
 function loadGameState() {
   try {
-    const saved = JSON.parse(localStorage.getItem('airportle-day'));
+    const saved = JSON.parse(localStorage.getItem(dayKey));
     if (!saved || saved.dayIndex !== getDayIndex()) return null;
     return saved;
   } catch {
@@ -414,8 +451,9 @@ function generateShareText() {
   const saved = loadGameState();
   const won = saved?.won;
   const numGuesses = won ? guesses.length : 'X';
+  const modeLabel = mode === 'original' ? ' Original' : '';
 
-  let text = `Airportle #${dayNum} ${numGuesses}/6\nhttps://airportle.club\n\n`;
+  let text = `Airportle${modeLabel} #${dayNum} ${numGuesses}/6\nhttps://airportle.club\n\n`;
   for (const g of guesses) {
     const line = g.result.map(r => r === 'correct' ? '🟩' : r === 'present' ? '🟨' : '⬛').join('');
     text += line + '\n';
@@ -465,7 +503,7 @@ if (saved) {
   // Don't auto-show modal on reload
 } else {
   // Show help on first ever visit
-  if (!localStorage.getItem('airportle-stats')) {
+  if (!localStorage.getItem(statsKey)) {
     setTimeout(() => openModal('help-modal'), 500);
   }
 }
