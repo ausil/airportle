@@ -469,7 +469,7 @@ function generateShareText() {
   const saved = loadGameState();
   const won = saved?.won;
   const numGuesses = won ? guesses.length : 'X';
-  const modeLabel = mode === 'original' ? ' Original' : '';
+  const modeLabel = mode === 'original' ? ' Original' : ' Filtered';
 
   let text = `Airportle${modeLabel} #${dayNum} ${numGuesses}/6\nhttps://airportle.club\n\n`;
   for (const g of guesses) {
