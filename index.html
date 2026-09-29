@@ -3,12 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Airportle</title>
-  <meta name="description" content="Guess the daily airport code in 6 tries!">
-  <meta property="og:title" content="Airportle">
-  <meta property="og:description" content="Guess the daily airport code in 6 tries!">
+  <title>Airportle — Guess the Daily Airport Code in 6 Tries</title>
+  <meta name="description" content="Airportle is a daily word game where you guess the day's 3-letter IATA airport code in 6 tries. Green means right letter, right spot; yellow means right letter, wrong spot. New puzzle every day.">
+  <link rel="canonical" href="https://airportle.club/">
+  <meta property="og:title" content="Airportle — Guess the Daily Airport Code in 6 Tries">
+  <meta property="og:description" content="A new 3-letter IATA airport code every day. Guess it in 6 tries — two modes: Filtered (~3,000 commercial airports) and Original (9,000+ codes).">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://airportle.club">
+  <meta property="og:url" content="https://airportle.club/">
+  <meta property="og:image" content="https://airportle.club/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Airportle board with three guesses revealing the code LAX">
+  <meta property="og:site_name" content="Airportle">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Airportle — Guess the Daily Airport Code in 6 Tries">
+  <meta name="twitter:description" content="A new 3-letter IATA airport code every day. Guess it in 6 tries.">
+  <meta name="twitter:image" content="https://airportle.club/og-image.png">
+  <meta name="theme-color" content="#121213">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
@@ -16,7 +27,7 @@
 <body>
   <header>
     <button id="help-btn" class="icon-btn" aria-label="How to play">?</button>
-    <h1>Airportle</h1>
+    <p id="wordmark" aria-hidden="true">Airportle</p>
     <button id="stats-btn" class="icon-btn" aria-label="Statistics">
       <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="4" y="14" width="4" height="6"/><rect x="10" y="8" width="4" height="12"/><rect x="16" y="4" width="4" height="16"/>
@@ -28,8 +39,10 @@
     <button class="mode-btn" data-mode="filtered">Filtered</button>
     <button class="mode-btn" data-mode="original">Original</button>
   </div>
+  <p id="mode-description"></p>
 
   <main>
+    <h1 class="visually-hidden">Airportle — guess the daily airport code in 6 tries</h1>
     <div id="board">
       <!-- 6 rows x 3 tiles, built by JS -->
     </div>
@@ -137,6 +150,114 @@
       <button id="result-share-btn">Share</button>
     </div>
   </div>
+
+  <footer id="seo-footer">
+    <section>
+      <h2>About Airportle</h2>
+      <p>Airportle is a free daily word game where you guess a real
+      <strong>IATA airport code</strong> — the three-letter code used on airline
+      tickets and baggage tags, like LAX for Los Angeles or LHR for London
+      Heathrow — in six tries. A new airport code is revealed every day, and
+      everyone around the world gets the same puzzle.</p>
+    </section>
+    <section>
+      <h2>How to play</h2>
+      <p>Type a valid three-letter airport code and press Enter. The tiles
+      change color to show how close you got:</p>
+      <ul>
+        <li><strong class="green-text">Green</strong> — correct letter in the correct position.</li>
+        <li><strong class="yellow-text">Yellow</strong> — correct letter in the wrong position.</li>
+        <li><strong class="gray-text">Gray</strong> — the letter is not in the code.</li>
+      </ul>
+      <p>For example, if the answer is LAX and you guess LAG, the L turns
+      green, the A turns yellow, and the G turns gray.</p>
+    </section>
+    <section>
+      <h2>Two difficulty modes</h2>
+      <p><strong>Filtered</strong> draws answers from about 3,000 airports with
+      scheduled commercial passenger service — the best place to start.
+      <strong>Original</strong> draws from all 9,000+ IATA codes, including
+      small, remote, and obscure airfields. Both modes reset daily and keep
+      separate statistics.</p>
+    </section>
+    <section>
+      <h2>Frequently asked questions</h2>
+      <dl>
+        <dt>Is Airportle free?</dt>
+        <dd>Yes. Airportle is free to play in any browser, with no account
+        required. Your streak and statistics are saved on your device.</dd>
+        <dt>When does the next puzzle arrive?</dt>
+        <dd>A new airport code puzzle unlocks every day at midnight in your
+        local time zone. The countdown timer in the statistics panel shows
+        when the next one is coming.</dd>
+        <dt>What counts as a valid guess?</dt>
+        <dd>Any currently assigned three-letter IATA airport code — over
+        9,000 of them — is accepted as a guess, in both modes.</dd>
+        <dt>Can I play both modes on the same day?</dt>
+        <dd>Yes. Filtered and Original have separate daily puzzles, streaks,
+        and guess distributions, so you can play two puzzles a day.</dd>
+      </dl>
+    </section>
+  </footer>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Airportle",
+    "url": "https://airportle.club/",
+    "description": "A daily word game where you guess the day's IATA airport code in six tries."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Game",
+    "name": "Airportle",
+    "url": "https://airportle.club/",
+    "description": "Guess the daily IATA airport code in six tries. Green means correct letter and position, yellow means correct letter in the wrong position, gray means the letter is absent. Two daily modes: Filtered (commercial airports) and Original (all IATA codes).",
+    "genre": "Word game",
+    "playMode": "SinglePlayer",
+    "numberOfPlayers": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 1 },
+    "gameTip": {
+      "@type": "HowTo",
+      "name": "How to play Airportle",
+      "step": [
+        { "@type": "HowToStep", "name": "Guess", "text": "Type a valid three-letter IATA airport code and press Enter." },
+        { "@type": "HowToStep", "name": "Read the tiles", "text": "Green tiles are correct letters in the correct position; yellow tiles are correct letters in the wrong position; gray tiles are letters not in the code." },
+        { "@type": "HowToStep", "name": "Win", "text": "Find the airport code within six guesses." }
+      ]
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is Airportle free?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Airportle is free to play in any browser with no account required. Your streak and statistics are saved on your device." }
+      },
+      {
+        "@type": "Question",
+        "name": "When does the next Airportle puzzle arrive?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A new airport code puzzle unlocks every day at midnight in your local time zone." }
+      },
+      {
+        "@type": "Question",
+        "name": "What counts as a valid guess in Airportle?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Any currently assigned three-letter IATA airport code — over 9,000 of them — is accepted as a guess in both modes." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between Filtered and Original mode?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Filtered mode draws answers from about 3,000 airports with scheduled commercial passenger service. Original mode draws from all 9,000+ IATA codes, including small and remote airfields. The modes have separate daily puzzles and statistics." }
+      }
+    ]
+  }
+  </script>
 
   <script type="module" src="game.js"></script>
 </body>

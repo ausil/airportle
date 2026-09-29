@@ -137,6 +137,10 @@ function initGame(newMode) {
     btn.classList.toggle('active', btn.dataset.mode === mode);
   });
 
+  document.getElementById('mode-description').textContent = mode === 'original'
+    ? 'Original mode — the answer can be any of 9,000+ IATA codes, including small and remote airfields.'
+    : 'Filtered mode — the answer is one of ~3,000 airports with scheduled commercial service.';
+
   const saved = loadGameState();
   if (saved) {
     restoreGame(saved);

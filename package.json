@@ -2,5 +2,8 @@
   "name": "airportle",
   "version": "1.0.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "start": "npx serve ."
+  }
 }

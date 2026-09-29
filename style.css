@@ -41,11 +41,25 @@ header {
   position: relative;
 }
 
-header h1 {
+#wordmark {
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+/* Accessible-only heading (single h1 for the page) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .icon-btn {
@@ -104,6 +118,17 @@ header h1 {
 .mode-btn.active {
   background: var(--tile-border);
   color: var(--text);
+}
+
+/* Current-mode explainer under the toggle */
+#mode-description {
+  max-width: 500px;
+  padding: 8px 16px 0;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--light-gray);
 }
 
 main {
@@ -484,6 +509,45 @@ main {
   font-size: 1rem;
   color: var(--light-gray);
   margin: 8px 0 20px;
+}
+
+/* SEO / info footer */
+#seo-footer {
+  width: 100%;
+  max-width: 500px;
+  padding: 8px 16px 32px;
+  color: var(--light-gray);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+#seo-footer section + section {
+  margin-top: 20px;
+}
+
+#seo-footer h2 {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+#seo-footer p,
+#seo-footer li {
+  margin: 6px 0;
+}
+
+#seo-footer ul {
+  padding-left: 20px;
+}
+
+#seo-footer dt {
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 10px;
+}
+
+#seo-footer dd {
+  margin: 2px 0 0 0;
 }
 
 /* Responsive */

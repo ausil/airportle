@@ -30,6 +30,13 @@ airports.js   Airport data (IATA codes, names, cities, countries)
 game.js       Game logic
 index.html    UI
 style.css     Styles
+og-image.png  Social share preview (1200×630)
+```
+
+Regenerate the social preview image after palette or branding changes:
+
+```bash
+python3 tools/make_og_image.py   # requires Pillow
 ```
 
 Open `index.html` in a browser or serve the directory with any static file server:
